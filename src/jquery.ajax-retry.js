@@ -21,9 +21,6 @@
   // enhance all ajax requests with our retry API
   $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
     jqXHR.retry = function(opts) {
-      if(opts.timeout) {
-        this.timeout = opts.timeout;
-      }
       if (opts.statusCodes) {
         this.statusCodes = opts.statusCodes;
       }
@@ -34,7 +31,7 @@
   // generates a fail pipe function that will retry `jqXHR` `times` more times
   function pipeFailRetry(jqXHR, opts) {
     var times = opts.times;
-    var timeout = jqXHR.timeout;
+    var timeout = opts.timeout;
 
     // takes failure data as input, returns a new deferred
     return function(input, status, msg) {
@@ -62,7 +59,7 @@
           }
           // ensure timeout is a positive number
           if (isNaN(timeout) || timeout < 0) {
-            timeout = jqXHR.timeout;
+            timeout = opts.timeout;
           }
         }
 
