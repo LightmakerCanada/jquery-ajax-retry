@@ -46,7 +46,7 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', ['jshint','qunit', 'concat', 'uglify', 'manifest']);
+  grunt.registerTask('default', [/*'jshint','qunit',*/ 'concat', 'uglify', 'manifest']);
 
   grunt.registerTask( "manifest", function() {
     var pkg = grunt.config( "pkg" );
@@ -70,5 +70,5 @@ module.exports = function(grunt) {
       }
     }, null, "  " ) );
   });
-  
+
 };
