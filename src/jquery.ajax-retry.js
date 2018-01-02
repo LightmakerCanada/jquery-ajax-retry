@@ -37,13 +37,19 @@
     return function(input, status, msg) {
       var ajaxOptions = this;
       var output = new $.Deferred();
+      var nextJqXHR;
       var retryAfter = jqXHR.getResponseHeader('Retry-After');
 
       // whenever we do make this request, pipe its output to our deferred
       function nextRequest() {
-        $.ajax(ajaxOptions)
+        nextJqXHR = $.ajax(ajaxOptions)
           .retry({times: times - 1, timeout: opts.timeout, statusCodes: opts.statusCodes})
           .then(output.resolve, output.reject);
+      }
+
+      // alias for jqXHR `abort()` method
+      output.abort = function(statusText) {
+        nextJqXHR.abort(statusText)
       }
 
       if (times > 1 && (!jqXHR.statusCodes || $.inArray(input.status, jqXHR.statusCodes) > -1)) {
