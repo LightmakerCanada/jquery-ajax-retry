@@ -13,7 +13,12 @@ $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
     if (opts.statusCodes) {
       this.statusCodes = opts.statusCodes;
     }
-    return this.then(null, pipeFailRetry(this, opts));
+
+    // alias for jqXHR `abort()` method
+    var promise = this.then(null, pipeFailRetry(this, opts));
+    promise.abort = function (statusText) { jqXHR.abort(statusText) };
+
+    return promise;
   };
 });
 
@@ -34,11 +39,6 @@ function pipeFailRetry(jqXHR, opts) {
       nextJqXHR = $.ajax(ajaxOptions)
         .retry({times: times - 1, timeout: opts.timeout, statusCodes: opts.statusCodes})
         .then(output.resolve, output.reject);
-    }
-
-    // alias for jqXHR `abort()` method
-    output.abort = function(statusText) {
-      nextJqXHR.abort(statusText)
     }
 
     if (times > 1 && (!jqXHR.statusCodes || $.inArray(input.status, jqXHR.statusCodes) > -1)) {
